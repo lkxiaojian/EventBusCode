@@ -207,8 +207,7 @@ public class EventBus {
     }
 
     /**
-     * Checks if the current thread is running in the main thread.
-     * If there is no main thread support (e.g. non-Android), "true" is always returned. In that case MAIN thread
+     * Checks if the current thread is running in-on-Android), "true" is always returned. In that case MAIN thread
      * subscribers are always called in posting thread, and BACKGROUND subscribers are always called from a background
      * poster.
      */
