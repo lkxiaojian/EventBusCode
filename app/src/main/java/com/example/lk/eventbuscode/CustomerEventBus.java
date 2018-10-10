@@ -29,6 +29,7 @@ public class CustomerEventBus {
         catchMap = new HashMap<>();
         //让handler 在主线程中调用
         mHandler = new Handler(Looper.getMainLooper());
+        //创建线程池 ，可以切换线程
         executorService = Executors.newCachedThreadPool();
     }
 
@@ -116,11 +117,12 @@ public class CustomerEventBus {
                 if (customerSubscribeMethod.getType().isAssignableFrom(object.getClass())) {
 
                     switch (customerSubscribeMethod.getCustomerThreadMode()) {
-                        case MAIN:
-                            //通过Looper 来判断是否在主线程
+                        case MAIN: //注册的时候，注解是主线程
+                            //通过Looper 来判断post()方法是否在主线程 是主线程 直接调用
                             if (Looper.myLooper() == Looper.getMainLooper()) {
                                 invoke(customerSubscribeMethod, objnext, object);
                             } else {
+                                //如果post()是子线程，通过handler 让其跳转到主线程
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -130,8 +132,8 @@ public class CustomerEventBus {
 
                             }
                             break;
-                        case BACKGROUND:
-
+                        case BACKGROUND://注册的时候，注解是子线程
+                            //通过Looper 来判断post()方法是否在主线程  是主线程   通过线程池，让其在子线程中运行
                             if (Looper.myLooper() == Looper.getMainLooper()) {
                                 executorService.execute(new Runnable() {
                                     @Override
@@ -140,6 +142,7 @@ public class CustomerEventBus {
                                     }
                                 });
                             } else {
+                                //post()方法是在子线程中运行 ，直接调用
                                 invoke(customerSubscribeMethod, objnext, object);
                             }
                             break;
@@ -156,7 +159,6 @@ public class CustomerEventBus {
 
     private void invoke(CustomerSubscribeMethod customerSubscribeMethod, Object next, Object object) {
         Method method = customerSubscribeMethod.getMethod();
-
         try {
             method.invoke(next, object);
         } catch (IllegalAccessException e) {
