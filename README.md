@@ -1,7 +1,9 @@
 # EventBusCode
 EventBus源码解析，并手动实现
+
 1 创建CustomerSubscribeMethod bean类  
-    //回调方法
+
+     //回调方法
     private Method method;
     //返回回调的线程
     private CustomerThreadMode customerThreadMode;
@@ -9,7 +11,7 @@ EventBus源码解析，并手动实现
     private Class<?> type;
     包含三个字段 ，主要是用与线程的切换，回调方法，回调方法中的参数
     
-   2 创建 CustomerEventBus 仿造EventBus register() post()方法
+2 创建 CustomerEventBus 仿造EventBus register() post()方法
    
        public void register(Object object) {
         List<CustomerSubscribeMethod> customerThreadModes = catchMap.get(object);
@@ -19,7 +21,9 @@ EventBus源码解析，并手动实现
         }
     }
 主要是把 注册的时候，该类的信息存进一个map里面，进行对注册的信息进行判断 如 是否是系统类，传递参数的个数，是否存在对应的注解
-  private List<CustomerSubscribeMethod> findSubscriberMethods(Object object) {
+
+
+    private List<CustomerSubscribeMethod> findSubscriberMethods(Object object) {
         List<CustomerSubscribeMethod> threadModeList = new ArrayList<>();
         Class<?> aClass = object.getClass();
         while (aClass != null) {
@@ -54,8 +58,10 @@ EventBus源码解析，并手动实现
     }
     
     
-    
-    3.post()
+
+ 3.post()遍历注册时候的map,根据传递的类型做判断，和实现线程直接的切换
+
+
         public void post(final Object object) {
         //遍历 已经注册的 EventBus的方法，找到后，通过反射，来进行把信息传递过去
         Set<Object> set = catchMap.keySet();
