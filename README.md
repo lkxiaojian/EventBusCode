@@ -1,6 +1,8 @@
 # EventBusCode
 EventBus源码解析，并手动实现
- 在EventBus源码解析.html是对EventBus的源码解析，下面是手动实现
+ 在EventBus源码解析.md是对EventBus的源码解析 ,但是排版不是太清晰
+ 在EventBus源码解析.html是清晰的，但是需要下载下来看，下面是手动实现
+
 1 创建CustomerSubscribeMethod bean类  
 
      //回调方法
