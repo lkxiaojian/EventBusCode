@@ -1,6 +1,6 @@
 # EventBusCode
 EventBus源码解析，并手动实现
-
+ 在EventBus源码解析.html是对EventBus的源码解析，下面是手动实现
 1 创建CustomerSubscribeMethod bean类  
 
      //回调方法

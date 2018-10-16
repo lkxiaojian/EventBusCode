@@ -298,7 +298,10 @@ public class EventBus {
                 throw new EventBusException("Internal error. Abort state was not reset");
             }
             try {
+                // 遍历事件队列
                 while (!eventQueue.isEmpty()) {
+                    // 发送单个事件
+                    // eventQueue.remove(0)，从事件队列移除事件
                     postSingleEvent(eventQueue.remove(0), postingState);
                 }
             } finally {
@@ -555,9 +558,11 @@ public class EventBus {
      */
     void invokeSubscriber(PendingPost pendingPost) {
         Object event = pendingPost.event;
+        // 释放pendingPost引用的资源
         Subscription subscription = pendingPost.subscription;
         PendingPost.releasePendingPost(pendingPost);
         if (subscription.active) {
+            // 用反射来执行订阅事件的方法
             invokeSubscriber(subscription, event);
         }
     }

@@ -72,6 +72,7 @@ class SubscriberMethodFinder {
             throw new EventBusException("Subscriber " + subscriberClass
                     + " and its super classes have no public methods with the @Subscribe annotation");
         } else {
+            //将注册信息存到缓存中
             METHOD_CACHE.put(subscriberClass, subscriberMethods);
             return subscriberMethods;
         }
@@ -93,8 +94,10 @@ class SubscriberMethodFinder {
                     }
                 }
             } else {
+                //通过反射进行查找
                 findUsingReflectionInSingleClass(findState);
             }
+            //  修改findState.clazz为subscriberClass的父类Class，即需要遍历父类
             findState.moveToSuperclass();
         }
         return getMethodsAndRelease(findState);

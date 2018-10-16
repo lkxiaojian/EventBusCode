@@ -35,11 +35,14 @@ public class HandlerPoster extends Handler implements Poster {
     }
 
     public void enqueue(Subscription subscription, Object event) {
+        // 用subscription和event封装一个PendingPost对象
         PendingPost pendingPost = PendingPost.obtainPendingPost(subscription, event);
         synchronized (this) {
+            // 入队列
             queue.enqueue(pendingPost);
             if (!handlerActive) {
                 handlerActive = true;
+                // 发送开始处理事件的消息，handleMessage()方法将被执行，完成从子线程到主线程的切换
                 if (!sendMessage(obtainMessage())) {
                     throw new EventBusException("Could not send handler message");
                 }
@@ -52,7 +55,9 @@ public class HandlerPoster extends Handler implements Poster {
         boolean rescheduled = false;
         try {
             long started = SystemClock.uptimeMillis();
+            // 死循环遍历队列
             while (true) {
+                // 出队列
                 PendingPost pendingPost = queue.poll();
                 if (pendingPost == null) {
                     synchronized (this) {
@@ -64,6 +69,7 @@ public class HandlerPoster extends Handler implements Poster {
                         }
                     }
                 }
+                // 进一步处理pendingPost
                 eventBus.invokeSubscriber(pendingPost);
                 long timeInMethod = SystemClock.uptimeMillis() - started;
                 if (timeInMethod >= maxMillisInsideHandleMessage) {
